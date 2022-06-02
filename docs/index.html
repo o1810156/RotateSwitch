@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body>* {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        body>button {
+            display: block;
+        }
+
+        #square {
+            border: 1px black solid;
+            width: 300px;
+            height: 300px;
+            padding: 0px;
+        }
+
+        .switch,
+        .margin_div,
+        #bulb {
+            width: 100px;
+            height: 100px;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        #bulb.off {
+            background: url("denkyuu_off.png");
+            background-size: 100px 100px;
+        }
+
+        #bulb.on {
+            background: url("denkyuu_on.png");
+            background-size: 100px 100px;
+        }
+
+        .line {
+            width: 300px;
+            height: 100px;
+            margin: 0px;
+            padding: 0px;
+            display: flex;
+        }
+
+        input[type="checkbox"] {
+            display: none;
+        }
+
+        input[type="checkbox"]+label {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            box-sizing: border-box;
+        }
+
+        input[type=checkbox]+label::before {
+            position: absolute;
+            content: '';
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            background-color: black;
+            border-radius: 50%;
+        }
+
+        input[type=checkbox]+label::after {
+            position: absolute;
+            content: '';
+            top: calc(50% + 2px);
+            left: calc(50% + 2px);
+            width: 96px;
+            height: 96px;
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        input[type=checkbox]:checked+label::before {
+            position: absolute;
+            content: '';
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            background-color: gray;
+            border-radius: 50%;
+        }
+
+        input[type=checkbox]:checked+label::after {
+            position: absolute;
+            content: '';
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            background-color: gray;
+            border-radius: 50%;
+        }
+
+        #square.anim {
+            animation: rot 1s linear;
+        }
+
+        @keyframes rot {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #cheat_board {
+            width: 60%;
+            padding: 10px;
+            border: 1px solid black;
+            display: block;
+        }
+
+        #cheat_board.hide {
+            display: none;
+        }
+
+        #message,
+        body>h1 {
+            text-align: center;
+        }
+
+        .push_button button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            padding: 0;
+            appearance: none;
+        }
+
+        .push_button button {
+            width: 280px;
+            border-radius: 3px;
+            position: relative;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 0 auto;
+            max-width: 220px;
+            padding: 10px 25px;
+            color: #FFF;
+            transition: 0.3s ease-in-out;
+            font-weight: 600;
+            background: rgb(149, 202, 252);
+            background: linear-gradient(270deg, rgba(149, 202, 252, 1) 0%, rgba(107, 182, 255, 1) 100%);
+        }
+
+        .push_button button:hover {
+            background: rgb(117, 188, 255);
+            background: linear-gradient(270deg, rgba(117, 188, 255, 1) 0%, rgba(62, 159, 252, 1) 100%);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>回転するスイッチ</h1>
+    <br />
+    <br />
+    <div id="square">
+        <div class="line">
+            <div class="switch"><input type="checkbox" id="b0" /><label for="b0"></label></div>
+            <div class="margin_div"></div>
+            <div class="switch"><input type="checkbox" id="b1" /><label for="b1"></label></div>
+        </div>
+        <div class="line">
+            <div class="margin_div"></div>
+            <div id="bulb" class="off"></div>
+            <div class="margin_div"></div>
+        </div>
+        <div class="line">
+            <div class="switch"><input type="checkbox" id="b3" /><label for="b3"></label></div>
+            <div class="margin_div"></div>
+            <div class="switch"><input type="checkbox" id="b2" /><label for="b2"></label></div>
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <div class="push_button"><button id="submit" class="button">PUSH</button></div>
+    <br />
+    <div id="message"></div>
+    <br />
+    <button onclick="document.querySelector('#cheat_board').classList.toggle('hide');">チートボード表示切替</button>
+    <br />
+    <br />
+    <div id="cheat_board" class="hide">
+        <div><button id="state_open">状態表示ONOFF</button></div>
+        <table id="state_table">
+            <tbody>
+                <tr>
+                    <td id="s0">OFF</td>
+                    <td id="s1">OFF</td>
+                </tr>
+                <tr>
+                    <td id="s3">OFF</td>
+                    <td id="s2">OFF</td>
+                </tr>
+            </tbody>
+        </table>
+        <div>Light: <span id="light">OFF</span></div>
+        <br />
+        <button id="all" class="button">全</button>
+        <button id="diagonal" class="button">対</button>
+        <button id="next" class="button">隣</button>
+        <button id="single" class="button">単</button>
+        <div>操作列: <span id="operate"></span></div>
+        <br />
+        <button id="auto_push" class="button">解法自動入力</button>
+        <br />
+        <br />
+        <button id="reset_ope">操作列リセット</button>
+    </div>
+    <br />
+    <button onclick="window.location.reload();">全体リセット</button>
+    <script>
+        const wait_time = 1000;
+
+        let b0 = document.querySelector("#b0");
+        let b1 = document.querySelector("#b1");
+        let b2 = document.querySelector("#b2");
+        let b3 = document.querySelector("#b3");
+        const distinguish_comb_kind = () => {
+            let s0 = b0.checked;
+            let s1 = b1.checked;
+            let s2 = b2.checked;
+            let s3 = b3.checked;
+            if (s0 && s1 && s2 && s3) {
+                return "[全]";
+            }
+            let num = [s0, s1, s2, s3].filter(s => s).length;
+            if (num == 0) {
+                return "[無]";
+            }
+            if (num == 3) {
+                return "[単]";
+            }
+            if ((s0 && s2) || (s1 && s3)) {
+                return "[対]";
+            }
+            if (num == 2) {
+                return "[隣]";
+            } else {
+                return "[単]";
+            }
+        };
+        const button_kind = {
+            "submit": distinguish_comb_kind,
+            "all": () => "全",
+            "diagonal": () => "対",
+            "next": () => "隣",
+            "single": () => "単",
+        };
+        const function_book = {
+            "submit": () => { },
+            "all": () => {
+                b0.checked = true;
+                b1.checked = true;
+                b2.checked = true;
+                b3.checked = true;
+            },
+            "diagonal": () => {
+                b0.checked = true;
+                b2.checked = true;
+            },
+            "next": () => {
+                b0.checked = true;
+                b3.checked = true;
+            },
+            "single": () => {
+                b0.checked = true;
+            },
+        };
+
+        let state = [false, false, false, false];
+
+        const check_light = () => {
+            let res = state.every(b => b);
+            document.querySelector("#light").textContent = res ? "ON!!" : "OFF";
+            let bulb = document.querySelector("#bulb");
+            if (res) {
+                bulb.classList.remove("off");
+                bulb.classList.add("on");
+            } else {
+                bulb.classList.remove("on");
+                bulb.classList.add("off");
+            }
+            return res;
+        };
+
+        const getRandomInt = (min, max) => {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+        };
+
+        const setState2Elm = state => {
+            state.forEach((elm, index) => document.querySelector("#s" + index).textContent = elm ? "ON" : "OFF");
+        };
+
+        const initState = () => {
+            state = state.map(b => [true, false][getRandomInt(0, 2)]);
+            setState2Elm(state);
+            check_light();
+        };
+
+        const randomRotate = () => {
+            let delta = getRandomInt(0, 4);
+            console.log("delta:" + delta);
+            console.log("" + [
+                ((0 + delta) % 4),
+                ((1 + delta) % 4),
+                ((2 + delta) % 4),
+                ((3 + delta) % 4),
+            ]);
+            let new_state = [0, 1, 2, 3].map(i => state[(i + delta) % 4]);
+            state = new_state;
+            setState2Elm(state);
+        };
+
+        const resetButtons = () => {
+            document.querySelectorAll('input[type="checkbox"]').forEach(e => e.checked = false);
+        };
+
+        const pushButton = button => {
+            function_book[button]();
+
+            [0, 1, 2, 3].forEach(i => {
+                let elm = document.querySelector("#b" + i);
+                if (elm.checked) {
+                    state[i] = !state[i];
+                    document.querySelector("#s" + i).textContent = state[i] ? "ON" : "OFF";
+                }
+            });
+            let buttons = document.querySelectorAll(".button");
+            buttons.forEach(b => b.setAttribute("disabled", true));
+            let mes_elm = document.querySelector("#message");
+            mes_elm.textContent = "回転中";
+            let operate = document.querySelector("#operate");
+            operate.textContent += button_kind[button]();
+            let square = document.querySelector("#square");
+            square.classList.toggle("anim");
+            setTimeout(() => {
+                randomRotate();
+                resetButtons();
+                buttons.forEach(b => b.removeAttribute("disabled"));
+                mes_elm.textContent = "";
+                square.classList.toggle("anim");
+            }, wait_time);
+
+            return check_light();
+        };
+
+        for (btn of ["submit", "all", "diagonal", "next", "single"]) {
+            const button = btn;
+            document.querySelector("#" + button).addEventListener("click", () => {
+                pushButton(button);
+            });
+        }
+
+        document.querySelector("#reset_ope").addEventListener("click", () => {
+            document.querySelector("#operate").textContent = "";
+        });
+
+        document.querySelector("#state_table").style.display = "none";
+        document.querySelector("#state_open").addEventListener("click", () => {
+            let st = document.querySelector("#state_table");
+            st.style.display = st.style.display == "block" ? "none" : "block";
+        });
+
+        let auto_counter = 0;
+        const solver = [
+            "all", "diagonal", "all",
+            "next",
+            "all", "diagonal", "all",
+            "single",
+            "all", "diagonal", "all",
+            "next",
+            "all", "diagonal", "all",
+        ];
+        let auto_push = document.querySelector("#auto_push");
+        auto_push.addEventListener("click", () => {
+            auto_push.setAttribute("disabled", true);
+            let timer = setInterval(() => {
+                if (check_light()) {
+                    clearInterval(timer);
+                    auto_counter = 0;
+                    auto_push.removeAttribute("disabled");
+                    return;
+                }
+
+                let light_state = pushButton(solver[auto_counter]);
+                auto_counter++;
+
+                if (light_state || auto_counter >= solver.length) {
+                    clearInterval(timer);
+                    auto_counter = 0;
+                    auto_push.removeAttribute("disabled");
+                }
+            }, wait_time + 100);
+        });
+
+        initState();
+    </script>
+</body>
+
+</html>
