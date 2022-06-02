@@ -227,6 +227,8 @@
         <button id="reset_ope">操作列リセット</button>
     </div>
     <br />
+    <button id="reset_to_init">初期状態に戻す</button>
+    <br />
     <button onclick="window.location.reload();">全体リセット</button>
     <script>
         const wait_time = 1000;
@@ -288,6 +290,7 @@
         };
 
         let state = [false, false, false, false];
+        let ini_state;
 
         const check_light = () => {
             let res = state.every(b => b);
@@ -303,20 +306,25 @@
             return res;
         };
 
+        const _setState2Elm = state => {
+            state.forEach((elm, index) => document.querySelector("#s" + index).textContent = elm ? "ON" : "OFF");
+        };
+
+        const setState = new_state => {
+            state = new_state.map(b => b);
+            _setState2Elm(state);
+            check_light();
+        };
+
         const getRandomInt = (min, max) => {
             min = Math.ceil(min);
             max = Math.floor(max);
             return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
         };
 
-        const setState2Elm = state => {
-            state.forEach((elm, index) => document.querySelector("#s" + index).textContent = elm ? "ON" : "OFF");
-        };
-
         const initState = () => {
-            state = state.map(b => [true, false][getRandomInt(0, 2)]);
-            setState2Elm(state);
-            check_light();
+            setState(state.map(b => [true, false][getRandomInt(0, 2)]));
+            ini_state = state.map(b => b);
         };
 
         const randomRotate = () => {
@@ -329,8 +337,7 @@
                 ((3 + delta) % 4),
             ]);
             let new_state = [0, 1, 2, 3].map(i => state[(i + delta) % 4]);
-            state = new_state;
-            setState2Elm(state);
+            setState(new_state);
         };
 
         const resetButtons = () => {
@@ -377,7 +384,7 @@
             document.querySelector("#operate").textContent = "";
         });
 
-        document.querySelector("#state_table").style.display = "none";
+        document.querySelector("#state_table").style.display = "block";
         document.querySelector("#state_open").addEventListener("click", () => {
             let st = document.querySelector("#state_table");
             st.style.display = st.style.display == "block" ? "none" : "block";
@@ -415,8 +422,18 @@
             }, wait_time + 100);
         });
 
+        document.querySelector("#reset_to_init").addEventListener("click", () => {
+            state = ini_state.map(b => b);
+            setState(state);
+            document.querySelector("#operate").textContent = "";
+        });
+
         initState();
     </script>
 </body>
 
 </html>
+
+<!--
+    TODO: 初期状態に戻したい -> ok
+-->
